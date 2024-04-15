@@ -1,12 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
+import { CommandDto } from './command-handler/dto/command.dto';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  async getState(): Promise<string> {
-    return await this.appService.getState();
+  getState(): Promise<string> {
+    return this.appService.getState();
+  }
+
+  @Post('command')
+  sendCommand(@Body() command: CommandDto): Promise<string> {
+    return this.appService.sendCommand(command);
   }
 }

@@ -19,12 +19,17 @@ export class CommandHandlerService {
   }
 
   async sendCommand(command: any): Promise<string> {
-    if (this.cachedResponse && !this.isCacheExpired()) {
+    if (
+      this.cachedResponse &&
+      !this.isCacheExpired() &&
+      command.command === 'getState'
+    ) {
       return this.cachedResponse;
     }
 
     try {
       const response = await this.writeCommand(command);
+
       this.updateCache(response);
       return response;
     } catch (errorMessage) {
@@ -52,6 +57,12 @@ export class CommandHandlerService {
       this.serialPortService.port.once('data', (data) => {
         clearTimeout(timeout);
         const jsonData = data.toString('utf-8');
+        const parsedData = JSON.parse(jsonData);
+
+        if (parsedData.error) {
+          reject(parsedData.error);
+        }
+
         resolve(jsonData);
       });
     });
