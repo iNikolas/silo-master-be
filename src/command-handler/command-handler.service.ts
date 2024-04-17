@@ -56,7 +56,7 @@ export class CommandHandlerService {
 
       this.serialPortService.port.once('data', (data) => {
         clearTimeout(timeout);
-        const jsonData = data.toString('utf-8');
+        const jsonData = data.toString('ASCII');
         const parsedData = JSON.parse(jsonData);
 
         if (parsedData.error) {

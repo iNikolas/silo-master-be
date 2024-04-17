@@ -19,6 +19,7 @@ export class SerialPortService implements OnModuleDestroy {
     return new SerialPort({
       path: this.configService.get<string>('PORT_PATH'),
       baudRate: parseInt(this.configService.get<string>('BAUD_RATE')),
+      highWaterMark: parseInt(this.configService.get<string>('BUFFER_SIZE_KB')),
     });
   }
 
