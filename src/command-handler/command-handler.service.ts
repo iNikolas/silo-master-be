@@ -54,16 +54,15 @@ export class CommandHandlerService {
         }
       });
 
-      this.serialPortService.port.once('data', (data) => {
+      this.serialPortService.parser.once('data', (data: string) => {
         clearTimeout(timeout);
-        const jsonData = data.toString('ASCII');
-        const parsedData = JSON.parse(jsonData);
+        const parsedData = JSON.parse(data);
 
         if (parsedData.error) {
           reject(parsedData.error);
         }
 
-        resolve(jsonData);
+        resolve(data);
       });
     });
   }
