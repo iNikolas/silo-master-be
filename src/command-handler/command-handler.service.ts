@@ -22,7 +22,7 @@ export class CommandHandlerService {
     if (
       this.cachedResponse &&
       !this.isCacheExpired() &&
-      command.command === 'getState'
+      command.command === 'gs'
     ) {
       return this.cachedResponse;
     }

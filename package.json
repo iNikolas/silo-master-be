@@ -1,8 +1,8 @@
 {
-  "name": "nest-arduino-controller",
+  "name": "silo-master-be",
   "version": "0.0.1",
   "description": "",
-  "author": "",
+  "author": "Mykola Lebid",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {

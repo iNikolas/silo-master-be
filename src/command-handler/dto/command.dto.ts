@@ -4,23 +4,35 @@ import {
   IsOptional,
   IsNumber,
   ValidateIf,
-  Min,
-  Max,
 } from 'class-validator';
 
 export class CommandDto {
   @IsString()
   @IsNotEmpty()
-  command: string;
-
-  @IsOptional()
-  @IsNotEmpty({ message: 'State must be defined if provided' })
-  state?: unknown;
+  c: string;
 
   @IsOptional()
   @IsNumber()
-  @ValidateIf((obj) => obj.brightness !== undefined)
-  @Min(0, { message: 'Brightness must be at least 0' })
-  @Max(100, { message: 'Brightness must be at most 100' })
-  brightness?: number;
+  @ValidateIf((obj) => obj.ex !== undefined)
+  ex?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ValidateIf((obj) => obj.ex !== undefined)
+  s?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ValidateIf((obj) => obj.ex !== undefined)
+  t?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ValidateIf((obj) => obj.ex !== undefined)
+  ss202?: number;
+
+  @IsOptional()
+  @IsNumber()
+  @ValidateIf((obj) => obj.ex !== undefined)
+  ss204?: number;
 }

@@ -7,7 +7,7 @@ export class AppService {
   constructor(private readonly commandHandlerService: CommandHandlerService) {}
 
   async getState(): Promise<string> {
-    const command = { command: 'getState' };
+    const command = { c: 'gs' };
     return await this.commandHandlerService.sendCommand(command);
   }
 
