@@ -2,12 +2,20 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 import { SerialPortService } from '../serial-port/serial-port.service';
+import { CommandDto } from './dto/command.dto';
 
 @Injectable()
 export class CommandHandlerService {
   private cachedResponse: string;
   private cacheExpirationMs: number;
   private cacheUpdatedTimestamp: number;
+
+  private commandQueue: Array<{
+    command: CommandDto;
+    resolve: (value: string) => void;
+    reject: (reason?: any) => void;
+  }> = [];
+  private isProcessing: boolean = false;
 
   constructor(
     private readonly serialPortService: SerialPortService,
@@ -18,22 +26,35 @@ export class CommandHandlerService {
     );
   }
 
-  async sendCommand(command: any): Promise<string> {
-    if (
-      this.cachedResponse &&
-      !this.isCacheExpired() &&
-      command.command === 'gs'
-    ) {
+  async sendCommand(command: CommandDto): Promise<string> {
+    if (this.cachedResponse && !this.isCacheExpired() && command.c === 'gs') {
       return this.cachedResponse;
     }
 
-    try {
-      const response = await this.writeCommand(command);
+    return new Promise((resolve, reject) => {
+      this.commandQueue.push({ command, resolve, reject });
+      this.processQueue();
+    });
+  }
 
+  private async processQueue(): Promise<void> {
+    if (this.isProcessing || this.commandQueue.length === 0) {
+      return;
+    }
+
+    this.isProcessing = true;
+    const { command, resolve, reject } = this.commandQueue.shift();
+
+    try {
+      console.log(command);
+      const response = await this.writeCommand(command);
       this.updateCache(response);
-      return response;
+      resolve(response);
     } catch (errorMessage) {
-      throw new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+      reject(new HttpException(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR));
+    } finally {
+      this.isProcessing = false;
+      this.processQueue();
     }
   }
 
